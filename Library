@@ -1,0 +1,160 @@
+// Will Ruggiano (wmr9fd)
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class Library {
+
+	public static void main(String[] args) {
+		ArrayList<String> members = new ArrayList<String>(Arrays.asList("Steph", "Matt", "Luther", "Mark", "David"));
+		LibraryBook horton = new LibraryBook("Horton Hears a Hoo", "Dr. Seuss");
+		horton.checkOut("Steph");
+		for(int x = 0; x < 13; x++) {
+		  System.out.println(horton.advanceDay());       																// returns false each time
+		}
+		LibraryBook places = new LibraryBook("Oh the Places You'll Go", "Dr. Seuss");
+		LibraryBook cat = new LibraryBook("The Cat in the Hat", "Ted Geisel");
+		ArrayList<LibraryBook> books = new ArrayList<LibraryBook>(Arrays.asList(horton, places, cat));
+		Library clark = new Library("Clark", books, members);
+		System.out.println(clark.toString());          																	// should return "Clark - 3 books and 5 members" 
+		System.out.println(new Library("Alderman", new ArrayList<LibraryBook>(), new ArrayList<String>()).toString());	// should return "Alderman - 0 books and 0 members"
+		System.out.println(clark.addBook(horton));            															// should return false
+		System.out.println(clark.addBook(new LibraryBook("Green Eggs and Ham", "Dr. Seuss")));							// should return true
+		System.out.println(clark.addMember("Jim"));     																// should return true
+		System.out.println(clark.addMember("Steph"));       															// should return false
+		System.out.println(clark.hasBook(horton));            															// should return true
+		System.out.println(clark.hasBook(new LibraryBook("The Lorax", "Dr. Seuss")));									// should return false
+		System.out.println(clark.getAllBooksByAuthor("Dr. Seuss"));														// should return an ArrayList<LibraryBook> containing {Horton Hears a Hoo, Oh the Places You'll Go, Green Eggs and Ham}
+		System.out.println(clark.getAllAvailableBooksByAuthor("Dr. Seuss"));											// should return an ArrayList<LibraryBook> containing {Oh the Places You'll Go, Green Eggs and Ham}      
+		System.out.println(clark.checkOutBook("Matt", horton));															// should return false
+		System.out.println(clark.checkOutBook("Luther", places));														// should return true
+		System.out.println(clark.advanceDay());         																// should return 1 (for Horton Hears a Hoo)<br>
+		
+		/*
+		Library alderman = new Library("Alderman", new ArrayList<LibraryBook>(Arrays.asList(horton, places, cat)), new ArrayList<String>(Arrays.asList("Will", "Chris", "Alex")));
+		LibraryBook best = new LibraryBook("The Best Ever", "Will Ruggiano");
+		System.out.println(alderman.hasBook(places));
+		System.out.println(alderman.addBook(best));
+		System.out.println(alderman.getAllAvailableBooksByAuthor("Will Ruggiano"));
+		System.out.println(alderman.checkOutBook("Will", best));
+		System.out.println(alderman.advanceDay());
+		System.out.println(alderman.checkOutBook("Matt", best));
+		System.out.println(alderman.toString());
+		*/
+	}
+
+	private String name;
+	private ArrayList<LibraryBook> books;
+	private ArrayList<String> members;
+
+	public Library(String name, ArrayList<LibraryBook> books,
+			ArrayList<String> members) {
+		this.name = name;
+		this.books = books;
+		this.members = members;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return this.name;
+	}
+
+	public void setBooks(ArrayList<LibraryBook> books) {
+		this.books = books;
+	}
+
+	public ArrayList<LibraryBook> getBooks() {
+		return this.books;
+	}
+
+	public void setMembers(ArrayList<String> members) {
+		this.members = members;
+	}
+
+	public ArrayList<String> getMembers() {
+		return this.members;
+	}
+
+	public boolean addBook(LibraryBook book) {
+		if (this.books.contains(book)) {
+			return false;
+		} else {
+			this.books.add(book);
+			return true;
+		}
+	}
+
+	public boolean addMember(String memberName) {
+		if (this.members.contains(memberName)) {
+			return false;
+		} else {
+			this.members.add(memberName);
+			return true;
+		}
+	}
+
+	public boolean hasBook(LibraryBook book) {
+		if (this.books.contains(book)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public ArrayList<LibraryBook> getAllBooksByAuthor(String author) {
+		ArrayList<LibraryBook> booksByAuthor = new ArrayList<LibraryBook>();
+		for (int i = 0; i < this.books.size(); i++) {
+			if (this.books.get(i).getAuthor().equals(author)) {
+				booksByAuthor.add(this.books.get(i));
+			}
+		}
+		return booksByAuthor;
+	}
+
+	public ArrayList<LibraryBook> getAllAvailableBooksByAuthor(String author) {
+		ArrayList<LibraryBook> availableBooksByAuthor = new ArrayList<LibraryBook>();
+		for (int i = 0; i < this.books.size(); i++) {
+			if (this.books.get(i).getAuthor().equals(author)) {
+				if (this.books.get(i).isCheckedOut()) {
+					// do nothing
+				} else {
+					availableBooksByAuthor.add(this.books.get(i));
+				}
+			}
+		}
+		return availableBooksByAuthor;
+	}
+
+	public boolean checkOutBook(String member, LibraryBook book) {
+		if (this.books.contains(book) && this.members.contains(member)) {
+			if (book.checkOut(member)) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	public int advanceDay() {
+		int returned = 0;
+		for (LibraryBook book : this.books) {
+			if (book.advanceDay()) {
+				book.advanceDay();
+				returned++;
+			} else {
+				book.advanceDay();
+			}
+		}
+		return returned;
+	}
+
+	public String toString() {
+		return "\"" + this.name + " - " + this.books.size() + " books and "
+				+ this.members.size() + " members\"";
+	}
+}
